@@ -1,0 +1,15 @@
+body{
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  touch-action: none;
+}
+
+canvas{
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  touch-action: none;
+}
