@@ -38,6 +38,8 @@ function setup(){
     // points[i] = new Point(random(width - 100) + 50, random(height - 100) + 50, 1000);
     ctrl.Create();
   }
+
+  dat.GUI.toggleHide();
 }
 
 function draw(){
