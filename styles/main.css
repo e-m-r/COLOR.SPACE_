@@ -37,11 +37,27 @@ canvas{
 
 h1{
   font: 400 24px/20px "pt sans narrow";
-  letter-spacing: 4px;
+  letter-spacing: 2.5px;
   color: rgba(0,0,0,0.5);
 }
 
 p{
   font: 400 14px/20px "pt mono";
   color: rgba(0,0,0,0.5);
+}
+
+.ctrl{
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+}
+
+.ctrl span{
+  color: rgba(0,0,0,0.5);
+}
+
+@media(max-width: 500px){
+  .help p{
+    display: none;
+  }
 }
