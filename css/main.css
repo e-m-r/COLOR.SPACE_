@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Sans|PT+Sans+Narrow|PT+Mono');
+
 html{
   position: fixed;
   top: 0px;
@@ -25,4 +27,21 @@ canvas{
   overflow-x: hidden;
   overflow-y: hidden;
   touch-action: none;
+}
+
+.help{
+  position: absolute;
+  padding: 10px 20px;
+  width: max-content;
+}
+
+h1{
+  font: 400 24px/20px "pt sans narrow";
+  letter-spacing: 4px;
+  color: rgba(0,0,0,0.5);
+}
+
+p{
+  font: 400 14px/20px "pt mono";
+  color: rgba(0,0,0,0.5);
 }
