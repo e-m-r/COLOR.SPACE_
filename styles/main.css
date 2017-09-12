@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=PT+Sans|PT+Sans+Narrow|PT+Mono');
 
+*::selection{
+  background: transparent;
+}
+
 html{
   position: fixed;
   top: 0px;
@@ -47,13 +51,17 @@ p{
 }
 
 .ctrl{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 10px;
+  box-sizing: border-box;
   position: absolute;
-  bottom: 5px;
-  right: 10px;
+  bottom: 0px;
 }
 
 .ctrl span{
-  color: rgba(0,0,0,0.5);
+  color: rgba(0,0,0,0.4);
 }
 
 @media(max-width: 500px){

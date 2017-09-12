@@ -8,7 +8,17 @@ function Controls(){
     f.add(p, "radius").listen();
   }
   this.Save = function(){
-    saveCanvas('colorspace', 'png');
+    saveCanvas('colorspace', 'jpg');
+  }
+  this.Clear = function(){
+    for(var i = 1; i <= points.length; i++){
+      console.log(i, points.length, gui.__folders);
+      gui.__folders[i].close();
+      gui.__folders[i].domElement.parentNode.parentNode.removeChild(gui.__folders[i].domElement.parentNode);
+      gui.__folders[i] = undefined;
+      gui.onResize();
+		}
+    points = [];
   }
 }
 
@@ -33,6 +43,7 @@ function setup(){
   gui = new dat.GUI();
   gui.add(ctrl, "Create");
   gui.add(ctrl, "Save");
+  gui.add(ctrl, "Clear");
 
   for(var i = 0; i < 3; i++){
     ctrl.Create();
@@ -81,6 +92,31 @@ function draw(){
   alreadySelected = false;
 }
 
+function touchMoved(){
+  for(let p of points){
+    //move points
+    if(!alreadySelected &&
+       touches.length > 0 &&
+       touches[0].x < p.x + 80 &&
+       touches[0].x > p.x - 80 &&
+       touches[0].y < p.y + 80 &&
+       touches[0].y > p.y - 80){
+      //if a point has already been selected, don't move another
+      alreadySelected = true;
+      //move currently selected point to the top
+      var i = points.indexOf(p);
+      points.splice(i, 1);
+      points.unshift(p);
+      p.x = touches[0].x;
+      p.y = touches[0].y;
+
+      if(touches.length > 1){
+        p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
+      }
+    }
+  }
+}
+
 var lastTouchY = 0;
 var preventPullToRefresh = false;
 
@@ -92,6 +128,26 @@ $('.js-plus').on('click', function(e){
 $('.js-plus').on('tap', function(e){
   e.preventDefault();
   ctrl.Create();
+});
+
+$('.js-refresh').on('click', function(e){
+  e.preventDefault();
+  ctrl.Clear();
+});
+
+$('.js-refresh').on('tap', function(e){
+  e.preventDefault();
+  ctrl.Clear();
+});
+
+$('.js-bookmark').on('click', function(e){
+  e.preventDefault();
+  ctrl.Save();
+});
+
+$('.js-bookmark').on('tap', function(e){
+  e.preventDefault();
+  ctrl.Save();
 });
 
 $('body').on('touchstart', function (e) {
