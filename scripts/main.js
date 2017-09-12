@@ -8,7 +8,7 @@ function Controls(){
     f.add(p, "radius").listen();
   }
   this.Save = function(){
-    saveCanvas('colorspace', 'jpg');
+    saveCanvas('colorspace', 'png');
   }
   this.Clear = function(){
     for(var i = 1; i <= points.length; i++){
@@ -82,9 +82,11 @@ function draw(){
   }
   //display points from bottom to top
   for(var i = points.length-1; i >=0; i--){
-    fill(points[i].x / width * 360, points[i].y / height * 100, 95, 0.3);
+    fill(points[i].x / width * 360, points[i].y / height * 100, 95, 0.5);
     ellipse(points[i].x, points[i].y, points[i].radius);
-    //TODO: make centers more visible
+  }
+
+  for(var i = points.length-1; i >=0; i--){
     fill(0, 0, 100, 1);
     ellipse(points[i].x, points[i].y,  10);
   }
@@ -117,9 +119,6 @@ function touchMoved(){
   }
 }
 
-var lastTouchY = 0;
-var preventPullToRefresh = false;
-
 $('.js-plus').on('click', function(e){
   e.preventDefault();
   ctrl.Create();
@@ -151,11 +150,7 @@ $('.js-bookmark').on('tap', function(e){
 });
 
 $('body').on('touchstart', function (e) {
-    // if (e.originalEvent.touches.length != 1) { return; }
-    // lastTouchY = e.originalEvent.touches[0].clientY;
-    // preventPullToRefresh = window.pageYOffset == 0;
 
-    // e.preventDefault();
 });
 
 $('body').on('touchmove', function (e) {
@@ -171,4 +166,27 @@ $('body').on('touchmove', function (e) {
     //     }
     // }
     e.preventDefault();
+
+    for(let p of points){
+      //move points
+      if(!alreadySelected &&
+         mouseIsPressed &&
+         mouseX < p.x + 80 &&
+         mouseX > p.x - 80 &&
+         mouseY < p.y + 80 &&
+         mouseY > p.y - 80){
+        //if a point has already been selected, don't move another
+        alreadySelected = true;
+        //move currently selected point to the top
+        var i = points.indexOf(p);
+        points.splice(i, 1);
+        points.unshift(p);
+        p.x = mouseX;
+        p.y = mouseY;
+
+        if(touches.length > 1){
+          p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
+        }
+      }
+    }
 });
