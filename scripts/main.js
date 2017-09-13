@@ -33,6 +33,8 @@ var points = [];
 var alreadySelected = false;
 var gui;
 var ctrl = new Controls();
+var selectedPoint = undefined;
+var selectDist;
 
 
 function setup(){
@@ -50,36 +52,36 @@ function setup(){
   }
 
   dat.GUI.toggleHide();
-
-  console.log(width/80);
 }
 
 function draw(){
 
   clear();
+  selectedPoint = undefined;
+  selectDist = 80;
 
   for(let p of points){
     //move points
-    if(!alreadySelected &&
-       mouseIsPressed &&
-       mouseX < p.x + 80 &&
-       mouseX > p.x - 80 &&
-       mouseY < p.y + 80 &&
-       mouseY > p.y - 80){
-      //if a point has already been selected, don't move another
-      alreadySelected = true;
-      //move currently selected point to the top
+    if(mouseIsPressed && dist(p.x, p.y, mouseX, mouseY) < selectDist){
+
+      selectDist = dist(p.x, p.y, mouseX, mouseY);
       var i = points.indexOf(p);
       points.splice(i, 1);
       points.unshift(p);
-      p.x = mouseX;
-      p.y = mouseY;
+      selectedPoint = p;
 
-      if(touches.length > 1){
-        p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
-      }
     }
   }
+
+  if(selectedPoint){
+    selectedPoint.x = mouseX;
+    selectedPoint.y = mouseY;
+
+    if(touches.length > 1){
+      selectedPoint.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
+    }
+  }
+
   //display points from bottom to top
   for(var i = points.length-1; i >=0; i--){
     fill(points[i].x / width * 360, points[i].y / height * 100, 95, 0.5);
@@ -91,30 +93,31 @@ function draw(){
     ellipse(points[i].x, points[i].y,  10);
   }
 
-  alreadySelected = false;
 }
 
 function touchMoved(){
+  selectedPoint = undefined;
+  selectDist = 80;
+
   for(let p of points){
     //move points
-    if(!alreadySelected &&
-       touches.length > 0 &&
-       touches[0].x < p.x + 80 &&
-       touches[0].x > p.x - 80 &&
-       touches[0].y < p.y + 80 &&
-       touches[0].y > p.y - 80){
-      //if a point has already been selected, don't move another
-      alreadySelected = true;
-      //move currently selected point to the top
+    if(touches.length > 0 && dist(p.x, p.y, touches[0].x, touches[0].y) < selectDist){
+
+      selectDist = dist(p.x, p.y, touches[0].x, touches[0].y);
       var i = points.indexOf(p);
       points.splice(i, 1);
       points.unshift(p);
-      p.x = touches[0].x;
-      p.y = touches[0].y;
+      selectedPoint = p;
 
-      if(touches.length > 1){
-        p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
-      }
+    }
+  }
+
+  if(selectedPoint){
+    selectedPoint.x = touches[0].x;
+    selectedPoint.y = touches[0].y;
+
+    if(touches.length > 1){
+      selectedPoint.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
     }
   }
 }
@@ -149,10 +152,6 @@ $('.js-bookmark').on('tap', function(e){
   ctrl.Save();
 });
 
-$('body').on('touchstart', function (e) {
-
-});
-
 $('body').on('touchmove', function (e) {
     // var touchY = e.originalEvent.touches[0].clientY;
     // var touchYDelta = touchY - lastTouchY;
@@ -167,26 +166,26 @@ $('body').on('touchmove', function (e) {
     // }
     e.preventDefault();
 
-    for(let p of points){
-      //move points
-      if(!alreadySelected &&
-         mouseIsPressed &&
-         mouseX < p.x + 80 &&
-         mouseX > p.x - 80 &&
-         mouseY < p.y + 80 &&
-         mouseY > p.y - 80){
-        //if a point has already been selected, don't move another
-        alreadySelected = true;
-        //move currently selected point to the top
-        var i = points.indexOf(p);
-        points.splice(i, 1);
-        points.unshift(p);
-        p.x = mouseX;
-        p.y = mouseY;
-
-        if(touches.length > 1){
-          p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
-        }
-      }
-    }
+    // for(let p of points){
+    //   //move points
+    //   if(!alreadySelected &&
+    //      mouseIsPressed &&
+    //      mouseX < p.x + 80 &&
+    //      mouseX > p.x - 80 &&
+    //      mouseY < p.y + 80 &&
+    //      mouseY > p.y - 80){
+    //     //if a point has already been selected, don't move another
+    //     alreadySelected = true;
+    //     //move currently selected point to the top
+    //     var i = points.indexOf(p);
+    //     points.splice(i, 1);
+    //     points.unshift(p);
+    //     p.x = mouseX;
+    //     p.y = mouseY;
+    //
+    //     if(touches.length > 1){
+    //       p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
+    //     }
+    //   }
+    // }
 });
