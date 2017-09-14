@@ -35,7 +35,7 @@ var gui;
 var ctrl = new Controls();
 var selectedPoint = undefined;
 var selectDist;
-
+var selected = false;
 
 function setup(){
   createCanvas(window.innerWidth, window.innerHeight);
@@ -57,28 +57,31 @@ function setup(){
 function draw(){
 
   clear();
-  selectedPoint = undefined;
-  selectDist = 80;
+  // selectedPoint = undefined;
+  selectDist = 100;
+  // console.log(selected);
 
-  for(let p of points){
-    //move points
-    if(mouseIsPressed && dist(p.x, p.y, mouseX, mouseY) < selectDist){
-
-      selectDist = dist(p.x, p.y, mouseX, mouseY);
-      var i = points.indexOf(p);
-      points.splice(i, 1);
-      points.unshift(p);
-      selectedPoint = p;
-
+  if(mouseIsPressed && !selected){
+    for(let p of points){
+      if(dist(p.x, p.y, mouseX, mouseY) < selectDist){
+        selectDist = dist(p.x, p.y, mouseX, mouseY);
+        var i = points.indexOf(p);
+        points.splice(i, 1);
+        points.unshift(p);
+        selectedPoint = p;
+        selected = true;
+      }
     }
   }
 
-  if(selectedPoint){
+  if(selected){
+    //move points
     selectedPoint.x = mouseX;
     selectedPoint.y = mouseY;
-
+    // console.log(selectedPoint);
+    //scale points
     if(touches.length > 1){
-      selectedPoint.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
+      selectedPoint.radius = dist(touches[0].x, touches[0].y, touches[1].x, touches[1].y);
     }
   }
 
@@ -95,31 +98,47 @@ function draw(){
 
 }
 
-function touchMoved(){
+function mouseReleased(){
   selectedPoint = undefined;
-  selectDist = 80;
+  selected = false;
 
-  for(let p of points){
+  return false;
+}
+
+function touchEnded(){
+    selectedPoint = undefined;
+    selected = false;
+}
+
+function touchMoved(){
+  selectDist = 100;
+  // console.log(selected);
+
+  if(mouseIsPressed && !selected){
+    for(let p of points){
+      if(dist(p.x, p.y, mouseX, mouseY) < selectDist){
+        selectDist = dist(p.x, p.y, mouseX, mouseY);
+        var i = points.indexOf(p);
+        points.splice(i, 1);
+        points.unshift(p);
+        selectedPoint = p;
+        selected = true;
+      }
+    }
+  }
+
+  if(selected){
     //move points
-    if(touches.length > 0 && dist(p.x, p.y, touches[0].x, touches[0].y) < selectDist){
-
-      selectDist = dist(p.x, p.y, touches[0].x, touches[0].y);
-      var i = points.indexOf(p);
-      points.splice(i, 1);
-      points.unshift(p);
-      selectedPoint = p;
-
-    }
-  }
-
-  if(selectedPoint){
-    selectedPoint.x = touches[0].x;
-    selectedPoint.y = touches[0].y;
-
+    selectedPoint.x = mouseX;
+    selectedPoint.y = mouseY;
+    // console.log(selectedPoint);
+    //scale points
     if(touches.length > 1){
-      selectedPoint.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
+      selectedPoint.radius = dist(touches[0].x, touches[0].y, touches[1].x, touches[1].y);
     }
   }
+
+  return false;
 }
 
 $('.js-plus').on('click', function(e){
@@ -153,39 +172,5 @@ $('.js-bookmark').on('tap', function(e){
 });
 
 $('body').on('touchmove', function (e) {
-    // var touchY = e.originalEvent.touches[0].clientY;
-    // var touchYDelta = touchY - lastTouchY;
-    // lastTouchY = touchY;
-    // if (preventPullToRefresh) {
-    //     // To suppress pull-to-refresh it is sufficient to preventDefault the first overscrolling touchmove.
-    //     preventPullToRefresh = false;
-    //     if (touchYDelta > 0) {
-    //         e.preventDefault();
-    //         return;
-    //     }
-    // }
     e.preventDefault();
-
-    // for(let p of points){
-    //   //move points
-    //   if(!alreadySelected &&
-    //      mouseIsPressed &&
-    //      mouseX < p.x + 80 &&
-    //      mouseX > p.x - 80 &&
-    //      mouseY < p.y + 80 &&
-    //      mouseY > p.y - 80){
-    //     //if a point has already been selected, don't move another
-    //     alreadySelected = true;
-    //     //move currently selected point to the top
-    //     var i = points.indexOf(p);
-    //     points.splice(i, 1);
-    //     points.unshift(p);
-    //     p.x = mouseX;
-    //     p.y = mouseY;
-    //
-    //     if(touches.length > 1){
-    //       p.radius = dist(touches[0].x, touches[0].y, touches[touches.length-1].x, touches[touches.length-1].y);
-    //     }
-    //   }
-    // }
 });
